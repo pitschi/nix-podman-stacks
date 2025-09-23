@@ -363,7 +363,7 @@ in {
         inherit category description;
         name = displayName;
         id = name;
-        icon = "di:lldap-dark";
+        icon = "auto-invert di:lldap";
       };
     };
   };

@@ -158,7 +158,7 @@ in {
           inherit category description;
           name = displayName;
           id = name;
-          icon = "di:karakeep";
+          icon = "auto-invert di:karakeep-dark";
         };
       };
 
