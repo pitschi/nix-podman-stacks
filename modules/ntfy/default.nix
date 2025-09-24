@@ -8,7 +8,7 @@
   storage = "${config.nps.storageBaseDir}/${name}";
   cfg = config.nps.stacks.${name};
 
-  category = "General";
+  category = "Monitoring";
   description = "Push Notifications";
   displayName = "ntfy";
 
