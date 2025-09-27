@@ -11,6 +11,7 @@
   yaml = pkgs.formats.yaml {};
 
   category = "Network & Administration";
+  displayName = "CrowdSec";
   description = "Collaborative Security Threat Prevention";
 
   timer = {
@@ -198,6 +199,7 @@ in {
 
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "crowdsec";
@@ -209,6 +211,7 @@ in {
       };
       glance = {
         inherit category description;
+        name = displayName;
         id = name;
         icon = "di:crowdsec";
       };

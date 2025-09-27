@@ -10,6 +10,7 @@
   storage = "${config.nps.storageBaseDir}/${name}";
 
   category = "General";
+  displayName = "Davis";
   description = "DAV Server";
 in {
   imports = import ../mkAliases.nix config lib name [name];
@@ -133,6 +134,7 @@ in {
         traefik.name = name;
         homepage = {
           inherit category;
+          name = displayName;
           settings = {
             inherit description;
             icon = "davis";
@@ -140,6 +142,7 @@ in {
         };
         glance = {
           inherit category description;
+          name = displayName;
           id = name;
           icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/davis.webp";
         };

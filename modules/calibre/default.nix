@@ -9,6 +9,9 @@
 
   category = "General";
   description = "Ebook Library";
+  displayName = "Calibre-Web-Automated";
+
+  downloaderDisplayName = "CWA Book Downloader";
   downloaderDescription = "Book Downloader for Calibre Web";
 in {
   imports = import ../mkAliases.nix config lib name [name "${name}-downloader"];
@@ -33,6 +36,7 @@ in {
       traefik.name = name;
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "calibre-web";
@@ -41,6 +45,7 @@ in {
       };
       glance = {
         inherit category description;
+        name = displayName;
         id = name;
         icon = "di:calibre-web";
       };
@@ -69,6 +74,7 @@ in {
       traefik.name = "calibre-downloader";
       homepage = {
         inherit category;
+        name = downloaderDisplayName;
         settings = {
           description = downloaderDescription;
           icon = "sh-cwa-book-downloader";
@@ -77,6 +83,7 @@ in {
       glance = {
         inherit category;
         id = name;
+        name = downloaderDisplayName;
         description = downloaderDescription;
         icon = "di:sh-cwa-book-downloader";
       };

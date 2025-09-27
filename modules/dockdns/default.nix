@@ -9,6 +9,7 @@
   yaml = pkgs.formats.yaml {};
 
   category = "Network & Administration";
+  displayName = "DockDNS";
   description = "Label-based DNS Client";
 in {
   imports =
@@ -88,6 +89,7 @@ in {
       traefik.name = name;
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "azure-dns";
@@ -95,6 +97,7 @@ in {
       };
       glance = {
         inherit category description;
+        name = displayName;
         id = name;
         icon = "di:azure-dns";
       };
