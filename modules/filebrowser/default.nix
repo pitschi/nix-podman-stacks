@@ -9,6 +9,7 @@
   cfg = config.nps.stacks.${name};
 
   category = "General";
+  displayName = "FileBrowser";
   description = "Web-based File Manager";
 in {
   imports = import ../mkAliases.nix config lib name [name];
@@ -54,6 +55,7 @@ in {
       traefik.name = name;
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "filebrowser";
@@ -62,6 +64,7 @@ in {
       glance = {
         inherit category description;
         id = name;
+        name = displayName;
         icon = "di:filebrowser";
       };
     };

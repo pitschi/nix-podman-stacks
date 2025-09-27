@@ -7,7 +7,8 @@
   cfg = config.nps.stacks.${name};
 
   category = "Network & Administration";
-  description = "Security Proxy for the Docker Socket";
+  displayName = "Socket Proxy";
+  description = "Security Proxy for the Podman Socket";
 in {
   imports = import ../mkAliases.nix config lib name [name];
 
@@ -58,6 +59,7 @@ in {
       traefik.name = "dsp";
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "haproxy";
@@ -65,6 +67,7 @@ in {
       };
       glance = {
         inherit category description;
+        name = displayName;
         id = name;
         icon = "di:haproxy";
       };

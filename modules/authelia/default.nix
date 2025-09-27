@@ -11,6 +11,7 @@
   storage = "${config.nps.storageBaseDir}/${name}";
 
   category = "Network & Administration";
+  displayName = "Authelia";
   description = "Authentication & Authorization Server";
 
   yaml = pkgs.formats.yaml {};
@@ -311,6 +312,7 @@ in {
 
         homepage = {
           inherit category;
+          name = displayName;
           settings = {
             inherit description;
             icon = "authelia";
@@ -318,6 +320,7 @@ in {
         };
         glance = {
           inherit category description;
+          name = displayName;
           id = name;
           icon = "di:authelia";
         };

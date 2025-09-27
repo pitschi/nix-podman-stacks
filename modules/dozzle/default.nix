@@ -7,6 +7,7 @@
   cfg = config.nps.stacks.${name};
 
   category = "Monitoring";
+  displayName = "Dozzle";
   description = "Container Log Viewer";
 in {
   imports =
@@ -37,6 +38,7 @@ in {
       traefik.name = name;
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "dozzle";
@@ -44,6 +46,7 @@ in {
       };
       glance = {
         inherit category description;
+        name = displayName;
         id = name;
         icon = "di:dozzle";
       };

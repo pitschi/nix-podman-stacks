@@ -9,6 +9,7 @@
   cfg = config.nps.stacks.${name};
 
   category = "Media & Downloads";
+  displayName = "Audiobookshelf";
   description = "Audiobook & Podcast Server";
 in {
   imports = import ../mkAliases.nix config lib name [name];
@@ -116,6 +117,7 @@ in {
 
       homepage = {
         inherit category;
+        name = displayName;
         settings = {
           inherit description;
           icon = "audiobookshelf";
@@ -124,6 +126,7 @@ in {
       };
       glance = {
         inherit category description;
+        name = displayName;
         id = name;
         icon = "di:audiobookshelf";
       };

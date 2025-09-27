@@ -8,6 +8,10 @@
   cfg = config.nps.stacks.${name};
 
   yaml = pkgs.formats.yaml {};
+
+  category = "Network & Administration";
+  displayName = "Glance";
+  description = "Dashboard";
 in {
   imports =
     [
@@ -94,6 +98,15 @@ in {
       traefik = {
         name = name;
         subDomain = "";
+      };
+
+      homepage = {
+        inherit category;
+        name = displayName;
+        settings = {
+          inherit description;
+          icon = "glance";
+        };
       };
     };
   };

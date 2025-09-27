@@ -9,6 +9,10 @@
   cfg = config.nps.stacks.${name};
   yaml = pkgs.formats.yaml {};
 
+  category = "Network & Administration";
+  displayName = "Homepage";
+  description = "Dashboard";
+
   utils = import ./utils.nix lib;
 
   deepFilterWidgets = value:
@@ -205,6 +209,13 @@ in {
       traefik = {
         inherit name;
         subDomain = "";
+      };
+
+      glance = {
+        inherit category description;
+        name = displayName;
+        id = name;
+        icon = "di:homepage.png";
       };
     };
 
