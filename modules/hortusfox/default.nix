@@ -105,7 +105,7 @@ in {
           inherit category description;
           name = displayName;
           id = name;
-          icon = "di:hortusfox";
+          icon = "sh:hortusfox";
         };
       };
 
