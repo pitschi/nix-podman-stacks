@@ -499,7 +499,7 @@ in {
         traefik.name = prowlarrName;
         homepage = {
           inherit category;
-          name = prowlarrName;
+          name = prowlarrDisplayName;
           settings = {
             description = prolarrDescription;
             icon = "prowlarr";
