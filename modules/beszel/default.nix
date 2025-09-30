@@ -15,6 +15,7 @@
   socketTargetLocation = "/var/run/podman.sock";
 
   category = "Monitoring";
+  displayName = "Beszel";
   description = "Lightweight Monitoring Platform";
 in {
   imports =
@@ -159,6 +160,7 @@ in {
         traefik.name = name;
         homepage = {
           inherit category;
+          name = displayName;
           settings = {
             inherit description;
             icon = "beszel";
@@ -166,6 +168,7 @@ in {
         };
         glance = {
           inherit category description;
+          name = displayName;
           id = name;
           icon = "di:beszel";
         };
