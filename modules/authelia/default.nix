@@ -92,7 +92,7 @@ in {
           OIDC client configuration.
           See <https://www.authelia.com/configuration/identity-providers/openid-connect/clients/>
         '';
-        default = [];
+        default = {};
         type = lib.types.attrsOf (
           lib.types.submodule (
             {name, ...}: {
