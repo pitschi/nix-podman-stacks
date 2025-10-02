@@ -634,6 +634,12 @@ in {
         };
       };
 
+      webtop = {
+        enable = true;
+        username = dummyUser;
+        passwordFile = dummySecret;
+      };
+
       wg-easy = {
         enable = true;
         extraEnv = {

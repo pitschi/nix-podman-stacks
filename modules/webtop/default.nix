@@ -40,6 +40,7 @@ in {
         PASSWORD = lib.mkIf (cfg.passwordFile != null) {fromFile = cfg.passwordFile;};
         PUID = config.nps.defaultUid;
         PGID = config.nps.defaultGid;
+        TZ = config.nps.defaultTz;
       };
       extraConfig.Container.ShmSize = "1gb";
       port = 3000;
