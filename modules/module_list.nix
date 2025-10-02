@@ -54,6 +54,7 @@ let
     uptime-kuma = ./uptime-kuma;
     vaultwarden = ./vaultwarden;
     vikunja = ./vikunja;
+    webtop = ./webtop;
     wg-easy = ./wg-easy;
     wg-portal = ./wg-portal;
   };

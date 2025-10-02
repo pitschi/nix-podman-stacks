@@ -37,8 +37,8 @@ in {
   config = lib.mkIf cfg.enable {
     services.podman.containers = {
       ${name} = {
-        # renovate: versioning=regex:^v(?<major>\d+)\.(?<minor>\d+)-ls(?<build>.+)$
-        image = "ghcr.io/linuxserver/healthchecks:v3.11-ls307";
+        # renovate: versioning=regex:^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-ls(?<build>.+)$
+        image = "ghcr.io/linuxserver/healthchecks:v3.11.2-ls313";
         volumes = ["${storage}/config:/config"];
         environment = {
           PUID = config.nps.defaultUid;
