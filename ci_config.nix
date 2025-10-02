@@ -637,7 +637,7 @@ in {
       webtop = {
         enable = true;
         username = dummyUser;
-        passwordFile = dummySecret;
+        passwordFile = dummySecretFile;
       };
 
       wg-easy = {
