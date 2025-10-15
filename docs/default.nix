@@ -6,25 +6,11 @@
   system,
   ...
 }: let
-  # Use a full HM system rather than (say) the result of
-  # `lib.evalModules`.  This is because our HM module refers to
-  # `services.podman`, which may itself refer to any number of other HM
-  # options, which may themselves... etc.  Without this, then, we'd get an
-  # evaluation error generating documentation.
-  eval = inputs.home-manager.lib.homeManagerConfiguration {
-    inherit pkgs;
+  eval = lib.evalModules {
     modules = [
+      {config._module.check = false;}
+      {_module.args.pkgs = pkgs;}
       self.homeModules.nps
-      {
-        home.stateVersion = "25.05";
-        home.username = "someuser";
-        home.homeDirectory = "/home/someuser";
-        nps = {
-          hostIP4Address = "10.10.10.10";
-          hostUid = 1000;
-          externalStorageBaseDir = "/mnt/ext";
-        };
-      }
     ];
   };
   gitHubDeclaration = user: repo: branch: subpath: {
@@ -102,7 +88,6 @@
       ]
     ];
   };
-  allOptions = mkOptionsDoc {};
 
   stackDocs = let
     stackNames = lib.attrNames eval.options.nps.stacks;
@@ -164,7 +149,8 @@ in {
   };
 
   search = inputs.search.packages.${system}.mkSearch {
-    optionsJSON = "${allOptions.optionsJSON}/share/doc/nixos/options.json";
+    modules = [self.homeModules.nps];
+    specialArgs.pkgs = pkgs;
     urlPrefix = "https://github.com/Tarow/nix-podman-stacks/blob/main/";
     title = "Nix Podman Stacks Search";
     baseHref = "/nix-podman-stacks/search/";
