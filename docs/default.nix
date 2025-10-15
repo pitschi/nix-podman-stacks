@@ -8,7 +8,7 @@
 }: let
   # Use a full HM system rather than (say) the result of
   # `lib.evalModules`.  This is because our HM module refers to
-  # `services.podman`, which may itself refer to any number of other NixOS
+  # `services.podman`, which may itself refer to any number of other HM
   # options, which may themselves... etc.  Without this, then, we'd get an
   # evaluation error generating documentation.
   eval = inputs.home-manager.lib.homeManagerConfiguration {
@@ -34,7 +34,8 @@
 
   nixPodmanStacksPath = toString self;
   hmPath = toString inputs.home-manager;
-
+  hasAnyLocPrefix = prefixes: loc:
+    lib.any (prefix: hasLocPrefix prefix loc) prefixes;
   hasLocPrefix = prefix: loc: lib.lists.take (lib.length prefix) loc == prefix;
 
   mkOptionsDoc = {
@@ -60,8 +61,8 @@
               "containers"
             ]
             && (lib.hasPrefix nixPodmanStacksPath (toString option.declarations))
-            && hasLocPrefix wantPrefix option.loc
-            && !(excludePrefix != [] && hasLocPrefix excludePrefix option.loc);
+            && (wantPrefix == [] || hasAnyLocPrefix wantPrefix option.loc)
+            && !(excludePrefix != [] && hasAnyLocPrefix excludePrefix option.loc);
         }
         // {
           declarations =
@@ -83,24 +84,22 @@
             |> lib.filter (d: d != null);
         };
     };
-
   settingsOptions = mkOptionsDoc {
-    wantPrefix = ["nps"];
+    wantPrefix = [["nps"]];
     excludePrefix = [
-      "nps"
-      "stacks"
-    ];
-  };
-  stackOptions = mkOptionsDoc {
-    wantPrefix = [
-      "nps"
-      "stacks"
+      [
+        "nps"
+        "stacks"
+      ]
+      ["nps" "containers"]
     ];
   };
   containerOptions = mkOptionsDoc {
     wantPrefix = [
-      "services"
-      "podman"
+      [
+        "services"
+        "podman"
+      ]
     ];
   };
   allOptions = mkOptionsDoc {};
@@ -112,9 +111,11 @@
     |> lib.map (
       stack: (lib.nameValuePair stack (mkOptionsDoc {
         wantPrefix = [
-          "nps"
-          "stacks"
-          stack
+          [
+            "nps"
+            "stacks"
+            stack
+          ]
         ];
       }))
     )
