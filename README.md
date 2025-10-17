@@ -94,6 +94,7 @@ There is also an [Option Search](https://tarow.github.io/nix-podman-stacks/searc
   - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/ntfy.svg" style="width:1em;height:1em;" /> Alertmanager-ntfy
   - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/podman.svg" style="width:1em;height:1em;" /> Podman Metrics Exporter
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/n8n.svg" style="width:1em;height:1em;" /> [n8n](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/n8n/default.nix)
+- <img src="https://raw.githubusercontent.com/Lissy93/networking-toolbox/main/static/icon.png" style="width:1em;height:1em;" /> [Networking Toolbox](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/networking-toolbox/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/ntfy.svg" style="width:1em;height:1em;" /> [ntfy](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/ntfy/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png" style="width:1em;" /> [OmniTools](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/omnitools/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/outline.svg" style="width:1em;" /> [Outline](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/outline/default.nix)

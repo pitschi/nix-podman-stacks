@@ -455,6 +455,8 @@ in {
 
       n8n.enable = true;
 
+      networking-toolbox.enable = true;
+
       ntfy = {
         enable = true;
         extraEnv = {
