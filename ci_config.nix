@@ -605,13 +605,13 @@ in {
 
       timetracker = {
         enable = true;
-        secretKeyFile = config.sops.secrets."timetracker/secret_key".path;
+        secretKeyFile = dummySecretFile;
         oidc = {
           enable = true;
           clientSecretFile = dummySecretFile;
           clientSecretHash = dummyHash;
         };
-        db.passwordFile = config.sops.secrets."timetracker/db_password".path;
+        db.passwordFile = dummySecretFile;
       };
 
       traefik = {
