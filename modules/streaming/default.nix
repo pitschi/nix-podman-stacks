@@ -15,7 +15,6 @@
   radarrName = "radarr";
   bazarrName = "bazarr";
   prowlarrName = "prowlarr";
-  flaresolverrName = "flaresolverr";
 
   category = "Media & Downloads";
   qbittorrentDescription = "BitTorrent Client";
@@ -30,8 +29,6 @@
   bazarrDisplayName = "Bazarr";
   prolarrDescription = "Indexer Management";
   prowlarrDisplayName = "Prowlarr";
-  flaresolverrDescription = "Cloudflare Protection Bypass";
-  flaresolverrDisplayName = "Flaresolverr";
 
   gluetunCategory = "Network & Administration";
   gluetunDescription = "VPN client";
@@ -213,6 +210,12 @@ in {
     );
 
   config = lib.mkIf cfg.enable {
+    # If Flaresolverr is enabled, enable it & connect it to the streaming stack network
+    nps.stacks.flaresolverr.enable = cfg.flaresolverr.enable;
+    nps.containers.flaresolverr = lib.mkIf cfg.flaresolverr.enable {
+      network = [stackName];
+    };
+
     nps.stacks.lldap.bootstrap.groups = lib.mkIf (cfg.jellyfin.enable && cfg.jellyfin.oidc.enable) {
       ${cfg.jellyfin.oidc.adminGroup} = {};
       ${cfg.jellyfin.oidc.userGroup} = {};
@@ -512,35 +515,6 @@ in {
           name = prowlarrDisplayName;
           id = prowlarrName;
           icon = "di:prowlarr";
-        };
-      };
-
-      ${flaresolverrName} = lib.mkIf cfg.flaresolverr.enable {
-        image = "ghcr.io/flaresolverr/flaresolverr:v3.4.5";
-        volumes = [
-          "${storage}/${prowlarrName}:/config"
-        ];
-        environment = {
-          LOG_LEVEL = "info";
-          LOG_HTML = false;
-          CAPTCHA_SOLVER = "none";
-        };
-
-        stack = stackName;
-        homepage = {
-          inherit category;
-          name = flaresolverrDisplayName;
-          settings = {
-            description = flaresolverrDescription;
-            icon = "flaresolverr";
-          };
-        };
-        glance = {
-          inherit category;
-          description = flaresolverrDescription;
-          name = flaresolverrDisplayName;
-          id = flaresolverrName;
-          icon = "di:flaresolverr";
         };
       };
     };
