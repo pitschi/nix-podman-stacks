@@ -82,6 +82,7 @@ There is also an [Option Search](https://tarow.github.io/nix-podman-stacks/searc
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/it-tools.svg" style="width:1em;height:1em;" /> [IT-Tools](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/it-tools/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/karakeep.svg" style="width:1em;height:1em;" /> [Karakeep](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/karakeep/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kimai.svg" style="width:1em;height:1em;" /> [Kimai](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/kimai/default.nix)
+- <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kitchenowl.svg" style="width:1em;height:1em;" /> [KitchenOwl](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/kitchenowl/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/komga.svg" style="width:1em;height:1em;" /> [Komga](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/komga/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/lldap.svg" style="width:1em;height:1em;" /> [LLDAP](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/lldap/default.nix)
 - <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/mazanoke.webp" style="width:1em;height:1em;" /> [Mazanoke](https://github.com/Tarow/nix-podman-stacks/tree/main/modules/mazanoke/default.nix)

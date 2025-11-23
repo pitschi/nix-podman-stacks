@@ -121,7 +121,7 @@ in {
       };
 
       davis = {
-        adminPasswordFile = dummySecret;
+        adminPasswordFile = dummySecretFile;
         enableLdapAuth = true;
         db = {
           type = "mysql";
@@ -379,6 +379,16 @@ in {
         db = {
           userPasswordFile = dummySecretFile;
           rootPasswordFile = dummySecretFile;
+        };
+      };
+
+      kitchenowl = {
+        enable = true;
+        jwtSecretFile = dummySecretFile;
+        oidc = {
+          enable = true;
+          clientSecretFile = dummySecretFile;
+          clientSecretHash = dummyHash;
         };
       };
 
