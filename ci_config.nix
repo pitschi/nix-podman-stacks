@@ -625,6 +625,22 @@ in {
           extraEnv."${lib.toUpper name}__AUTH__APIKEY".fromFile = dummySecretFile;
         });
 
+      tandoor = {
+        enable = true;
+        secretKeyFile = dummySecretFile;
+        db.passwordFile = dummySecretFile;
+        oidc = {
+          enable = true;
+          clientSecretFile = dummySecretFile;
+          clientSecretHash = dummyHash;
+        };
+        containers.tandoor.extraEnv = {
+          # https://docs.tandoor.dev/system/configuration/#default-permissions
+          SOCIAL_DEFAULT_ACCESS = 1;
+          SOCIAL_DEFAULT_GROUP = "user";
+        };
+      };
+
       timetracker = {
         enable = true;
         secretKeyFile = dummySecretFile;

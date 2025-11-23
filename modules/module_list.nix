@@ -54,6 +54,7 @@ let
     stirling-pdf = ./stirling-pdf;
     storyteller = ./storyteller;
     streaming = ./streaming;
+    tandoor = ./tandoor;
     timetracker = ./timetracker;
     traefik = ./traefik;
     uptime-kuma = ./uptime-kuma;
