@@ -6,6 +6,7 @@ let
     audiobookshelf = ./audiobookshelf;
     authelia = ./authelia;
     baikal = ./baikal;
+    bentopdf = ./bentopdf;
     beszel = ./beszel;
     blocky = ./blocky;
     booklore = ./booklore;
