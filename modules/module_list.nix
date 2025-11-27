@@ -48,6 +48,7 @@ let
     ntfy = ./ntfy;
     omnitools = ./omnitools;
     outline = ./outline;
+    pangolin-newt = ./pangolin-newt;
     paperless = ./paperless;
     pocketid = ./pocket-id;
     romm = ./romm;
