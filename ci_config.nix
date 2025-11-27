@@ -60,6 +60,8 @@ in {
 
       baikal.enable = true;
 
+      bentopdf.enable = true;
+
       beszel = {
         enable = true;
         ed25519PrivateKeyFile = dummySecretFile;
