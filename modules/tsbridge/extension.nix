@@ -142,17 +142,7 @@ in {
             hasPort = tsbridgeCfg.port != null;
             hasBackendAddr = tsbridgeCfg.backendAddr != null;
           in {
-            assertions = [
-              {
-                assertion = !enableTsbridge || (hasPort || hasBackendAddr);
-                message = "Container '${name}': tsbridge.enable is true but neither tsbridge.port nor tsbridge.backendAddr is specified.";
-              }
-              {
-                assertion = !enableTsbridge || !(hasPort && hasBackendAddr);
-                message = "Container '${name}': Both tsbridge.port and tsbridge.backendAddr are specified. Only one should be set.";
-              }
-            ];
-
+            # Assertions are now at the root module level (see below)
             labels = lib.optionalAttrs enableTsbridge (
               {
                 "tsbridge.enabled" = "true";
@@ -199,4 +189,25 @@ in {
       )
     );
   };
+
+  # Root-level assertions for tsbridge configuration
+  config.assertions =
+    lib.mapAttrsToList (
+      name: containerCfg: let
+        tsbridgeCfg = containerCfg.tsbridge;
+        enableTsbridge = stackCfg.enable && tsbridgeCfg.enable;
+        hasPort = tsbridgeCfg.port != null;
+        hasBackendAddr = tsbridgeCfg.backendAddr != null;
+      in [
+        {
+          assertion = !enableTsbridge || (hasPort || hasBackendAddr);
+          message = "Container '${name}': tsbridge.enable is true but neither tsbridge.port nor tsbridge.backendAddr is specified.";
+        }
+        {
+          assertion = !enableTsbridge || !(hasPort && hasBackendAddr);
+          message = "Container '${name}': Both tsbridge.port and tsbridge.backendAddr are specified. Only one should be set.";
+        }
+      ]
+    ) config.services.podman.containers
+    |> lib.flatten;
 }
