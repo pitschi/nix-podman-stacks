@@ -114,7 +114,7 @@ in {
         in
           {
             SECRET_KEY.fromFile = cfg.secretKeyFile;
-            ALLOWED_HOSYTS = cfg.containers.${name}.traefik.serviceHost;
+            ALLOWED_HOSTS = cfg.containers.${name}.traefik.serviceHost;
             DB_ENGINE = "django.db.backends.postgresql";
             POSTGRES_HOST = dbName;
             POSTGRES_DB = db.POSTGRES_DB;
