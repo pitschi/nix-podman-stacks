@@ -24,6 +24,9 @@ This module provides integration with [tsbridge](https://github.com/jtdowney/tsb
   nps.stacks.tsbridge = {
     enable = true;
     
+    # Required: Your Tailscale tailnet domain
+    tailnetDomain = "my-tailnet.ts.net";
+    
     oauth = {
       clientIdFile = "/run/secrets/tsbridge_oauth_client_id";
       clientSecretFile = "/run/secrets/tsbridge_oauth_client_secret";
@@ -97,6 +100,14 @@ These options configure the tsbridge container itself and are prefixed with `nps
 - **Description:** Default Tailscale tags applied to all services
 - **Example:** `["tag:prod" "tag:http"]`
 - **Label:** `tsbridge.tailscale.default_tags`
+
+##### `nps.stacks.tsbridge.tailnetDomain`
+- **Type:** string
+- **Default:** (none)
+- **Required:** yes
+- **Description:** Your Tailscale tailnet domain name. Used to construct full service hosts (`tsbridge.serciceHost`) and full service URLs (`tsbridge.serviceUrl`).
+- **Example:** `"my-tailnet.ts.net"`
+- **Note:** ⚠️ This setting is **required** when using tsbridge wiht Tialscale. Find your tailnet domain in your Tailscale admin console.
 
 #### Global Proxy Configuration (`tsbridge.global.*` labels)
 
@@ -218,8 +229,25 @@ These options are available on any container definition via the `tsbridge` attri
 ##### `tsbridge.insecureSkipVerify`
 - **Type:** boolean
 - **Default:** false
-- **Description:** Skip TLS verification for HTTPS backends (use only for trusted self-signed certs)
+- **Description:** Skip TLS certificate verification for HTTPS backends (use only for trusted internal services with self-signed certificates)
 - **Label:** `tsbridge.service.insecure_skip_verify`
+
+#### Service URL Information
+
+##### `tsbridge.serviceHost`
+- **Type:** string (read-only)
+- **Description:** The full hostname of the service on the Tailnet (automatically generated). Can be used for `ALLOWED_HOSTS` environment variables. For example `homepage` needs that in its `HOMEPAGE_ALLOWED_HOSTS` environment variable.   
+- **Format:** `serviceName.tailnet-domain`
+- **Example:** `"homepage.my-tailnet.ts.net"`
+- **Note:** Uses custom `serviceName` if set, otherwise uses container name
+
+##### `tsbridge.serviceUrl`
+- **Type:** string (read-only)
+- **Description:** The full HTTPS URL of the service on the Tailnet (automatically generated)
+- **Example:** `"https://homepage.my-tailnet.ts.net"`
+- **Usage:** Can be used in other container configurations that need to reference the tsbridge URL
+
+## Not Yet Implemented
 
 ## Additional Options Not Yet Implemented
 
@@ -308,6 +336,7 @@ If you need any of these options, please open an issue or submit a pull request 
 {
   nps.stacks.tsbridge = {
     enable = true;
+    tailnetDomain = "my-tailnet.ts.net";
     writeTimeout = "0s";  # No write timeout globally
     oauth = {
       clientIdFile = "/run/secrets/tsbridge_oauth_id";
@@ -383,6 +412,7 @@ For enhanced security, use tsbridge with docker-socket-proxy:
 {
   nps.stacks.tsbridge = {
     enable = true;
+    tailnetDomain = "my-tailnet.ts.net";
     useSocketProxy = true;
     oauth = {
       clientIdFile = "/run/secrets/tsbridge_oauth_id";
