@@ -30,10 +30,33 @@ The projects also contains integrations with Traefik, Homepage, Grafana and more
 - Similariy, Grafana dashboards for Traefik, Blocky & others can be automatically added
 - and more ...
 
-Disabling any of those options will of course also remove all associated configurations and containers.
-
 While most stacks can be activated by setting a single flag, some stacks require setting mandatory values, especially for secrets.
 For managing secrets, projects such as [sops-nix](https://github.com/Mic92/sops-nix) or [agenix](https://github.com/ryantm/agenix) can be used, which allow you to store your secrets along with the configuration inside a single Git repository.
+
+## Example
+
+Simple example of how to enable Traefik (including LetsEncrypt certificates & Geoblocking), Paperless & Homepage:
+
+```nix
+{
+  nps.stacks = {
+    homepage.enable = true;
+    paperless = {
+      enable = true;
+      secretKeyFile = config.sops.secrets."paperless/secret_key".path;
+      db.passwordFile = config.sops.secrets."paperless/db_password".path;
+    };
+    traefik = {
+      enable = true;
+      domain = "example.com";
+      geoblock.allowedCountries = ["DE"];
+      extraEnv.CF_DNS_API_TOKEN.fromFile = config.sops.secrets."traefik/cf_api_token".path;
+    };
+  };
+}
+```
+
+Services will be automatially added to Homepage and are available via the Traefik reverse proxy.
 
 ## 📔 Option Documentation
 
