@@ -134,6 +134,34 @@ in {
                   Only use this for trusted internal services with self-signed certificates.
                 '';
               };
+
+              serviceHost = mkOption {
+                type = types.str;
+                description = ''
+                  The full hostname of the service on the Tailnet.
+                  Format: serviceName.tailnet-domain
+                '';
+                default = 
+                  let
+                    serviceName = if tsbridgeCfg.serviceName != null
+                                  then tsbridgeCfg.serviceName
+                                  else name;
+                  in "${serviceName}.${stackCfg.tailnetDomain}";
+                defaultText = lib.literalExpression ''
+                  "''${tsbridgeCfg.serviceName or containerName}.''${stackCfg.tailnetDomain}"
+                '';
+                readOnly = true;
+              };
+
+              serviceUrl = mkOption {
+                type = types.str;
+                description = ''
+                  The full HTTPS URL of the service on the Tailnet.
+                '';
+                default = "https://${tsbridgeCfg.serviceHost}";
+                defaultText = lib.literalExpression ''"https://''${tsbridgeCfg.serviceHost}"'';
+                readOnly = true;
+              };
             };
           };
 

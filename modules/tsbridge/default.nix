@@ -106,6 +106,16 @@ in {
       example = ["tag:prod" "tag:http"];
     };
 
+    tailnetDomain = lib.options.mkOption {
+      type = lib.types.str;
+      description = ''
+        Your Tailscale tailnet domain name.
+        This is used to construct the full service URLs.
+        Format: tailnet-name.ts.net
+      '';
+      example = "my-tailnet.ts.net";
+    };
+
     metricsAddr = lib.options.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
@@ -151,6 +161,10 @@ in {
         message = "tsbridge requires both oauth.clientIdFile and oauth.clientSecretFile to be set.";
       }
       {
+        assertion = cfg.tailnetDomain != "";
+        message = "tsbridge requires tailnetDomain to be set. Example: my-tailnet.ts.net";
+      }
+      {
         assertion = cfg.useSocketProxy -> config.nps.stacks.docker-socket-proxy.enable;
         message = "The option 'nps.stacks.${name}.useSocketProxy' is set to true, but the 'docker-socket-proxy' stack is not enabled.";
       }
@@ -167,6 +181,8 @@ in {
 
     services.podman.containers.${name} = {
       image = "ghcr.io/jtdowney/tsbridge:latest";
+
+      exec = "--provider docker";
 
       extraEnv =
         {
