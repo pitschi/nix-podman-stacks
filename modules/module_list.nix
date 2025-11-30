@@ -24,6 +24,7 @@ let
     filebrowser-quantum = ./filebrowser-quantum;
     flaresolverr = ./flaresolverr;
     forgejo = ./forgejo;
+    free-games-claimer = ./free-games-claimer;
     freshrss = ./freshrss;
     gatus = ./gatus;
     glance = ./glance;
