@@ -6,7 +6,7 @@
 }: let
   cfg = config.nps;
 in {
-  imports = [./extension.nix];
+  imports = [./extension.nix ./reverse-proxy.nix];
 
   options.nps = {
     package = lib.mkPackageOption pkgs "podman" {};
