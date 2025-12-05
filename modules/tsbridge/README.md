@@ -9,11 +9,22 @@ This module provides integration with [tsbridge](https://github.com/jtdowney/tsb
 - Per-service configuration via NixOS options
 - Support for custom tags, headers, and streaming
 - Integrated with the nix-podman-stacks ecosystem
+- **Automatic Docker socket proxy integration** - automatically uses `docker-socket-proxy` when enabled
 
 ## Prerequisites
 
 1. A Tailscale account with OAuth credentials
 2. OAuth client ID and secret from Tailscale admin console
+3. (Optional) `docker-socket-proxy` stack for enhanced security
+
+## Docker Socket Access
+
+The tsbridge module needs access to the Docker/Podman socket to discover containers. This is handled automatically in two ways:
+
+- **With docker-socket-proxy enabled:** tsbridge will automatically use the socket proxy and connect via `--docker-socket` flag pointing to the proxy's address. This provides read-only access and enhanced security.
+- **Without docker-socket-proxy:** tsbridge will mount the Podman socket directly at `/var/run/docker.sock` in read-only mode.
+
+You don't need to configure this manually - the module detects the socket proxy and configures itself accordingly.
 
 ## Quick Start
 

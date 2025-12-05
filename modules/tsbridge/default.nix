@@ -182,7 +182,10 @@ in {
     services.podman.containers.${name} = {
       image = "ghcr.io/jtdowney/tsbridge:latest";
 
-      exec = "--provider docker";
+      exec =
+        "--provider docker"
+        + lib.optionalString cfg.useSocketProxy
+          " --docker-socket ${config.nps.stacks.docker-socket-proxy.address}";
 
       extraEnv =
         {
