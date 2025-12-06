@@ -77,7 +77,7 @@ in {
         enableGrafanaDashboard = true;
         enablePrometheusExport = true;
         containers.blocky = {
-          homepage.settings.href = "${config.nps.containers.grafana.traefik.serviceUrl}/d/blocky";
+          homepage.settings.href = "${config.nps.containers.grafana.reverseProxy.serviceUrl}/d/blocky";
           gatus = {
             enable = true;
             settings = {

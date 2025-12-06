@@ -79,8 +79,8 @@ in {
           pkce_challenge_method = "S256";
           pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
           redirect_uris = [
-            "${cfg.containers.${name}.traefik.serviceUrl}/auth/openid/callback"
-            "${cfg.containers.${name}.traefik.serviceUrl}/auth/openid/mobile-redirect"
+            "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/openid/callback"
+            "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/openid/mobile-redirect"
             "audiobookshelf://oauth"
           ];
           scopes = [

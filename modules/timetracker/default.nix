@@ -110,7 +110,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/auth/oidc/callback"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/oidc/callback"
         ];
       };
       settings.identity_providers.oidc.authorization_policies.${name} = {
@@ -154,10 +154,10 @@ in {
             utils = import ../utils.nix {inherit lib config;};
           in {
             AUTH_METHOD = lib.mkDefault "both";
-            OIDC_ISSUER = config.nps.containers.authelia.traefik.serviceUrl;
+            OIDC_ISSUER = config.nps.containers.authelia.reverseProxy.serviceUrl;
             OIDC_CLIENT_ID = name;
             OIDC_CLIENT_SECRET.fromFile = cfg.oidc.clientSecretFile;
-            OIDC_REDIRECT_URI = "${cfg.containers.${name}.traefik.serviceUrl}/auth/oidc/callback";
+            OIDC_REDIRECT_URI = "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/oidc/callback";
             OIDC_SCOPES = utils.escapeOnDemand ''"openid profile email groups"'';
             OIDC_USERNAME_CLAIM = "preferred_username";
             OIDC_FULL_NAME_CLAIM = "name";

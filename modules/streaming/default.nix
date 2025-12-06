@@ -231,7 +231,7 @@ in {
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         token_endpoint_auth_method = "client_secret_post";
         redirect_uris = [
-          "${cfg.containers.${jellyfinName}.traefik.serviceUrl}/sso/OID/redirect/authelia"
+          "${cfg.containers.${jellyfinName}.reverseProxy.serviceUrl}/sso/OID/redirect/authelia"
         ];
       };
     };
@@ -264,7 +264,7 @@ in {
           }
           // cfg.gluetun.extraEnv;
 
-        network = [config.nps.stacks.traefik.network.name];
+        network = [config.nps.reverseProxy.network.name];
 
         stack = stackName;
         port = 8888;
@@ -332,7 +332,7 @@ in {
         brandingXml = pkgs.writeText "branding.xml" ''
           <?xml version="1.0" encoding="utf-8"?>
           <BrandingOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-            <LoginDisclaimer>&lt;form action="${config.nps.containers.jellyfin.traefik.serviceUrl}/sso/OID/start/authelia"&gt;
+            <LoginDisclaimer>&lt;form action="${config.nps.containers.jellyfin.reverseProxy.serviceUrl}/sso/OID/start/authelia"&gt;
             &lt;button class="raised block emby-button button-submit"&gt;
               Sign in with Authelia
             &lt;/button&gt;
@@ -360,7 +360,7 @@ in {
           templateMount = lib.optional cfg.jellyfin.oidc.enable {
             templatePath = pkgs.writeText "oidc-template" (
               import ./jellyfin_sso_config.nix {
-                autheliaUri = config.nps.containers.authelia.traefik.serviceUrl;
+                autheliaUri = config.nps.containers.authelia.reverseProxy.serviceUrl;
                 clientId = jellyfinName;
                 adminGroup = cfg.jellyfin.oidc.adminGroup;
                 userGroup = cfg.jellyfin.oidc.userGroup;
@@ -375,7 +375,7 @@ in {
             PUID = config.nps.defaultUid;
             PGID = config.nps.defaultGid;
             JELLYFIN_PublishedServerUrl =
-              config.services.podman.containers.${jellyfinName}.traefik.serviceUrl;
+              config.services.podman.containers.${jellyfinName}.reverseProxy.serviceUrl;
           };
 
           port = 8096;

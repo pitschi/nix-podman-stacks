@@ -13,13 +13,14 @@
 
   knownReverseProxys = ["traefik"];
   reverseProxyEnabled = lib.any (name: config.nps.stacks.${name}.enable) knownReverseProxys;
-  stackCfg = config.nps.stacks.reverseProxy;
+  stackCfg = config.nps.reverseProxy;
 in {
   # Internal abstraction. Only one proxy implementation can set these options.
-  options.nps.stacks.reverseProxy = {
+  options.nps.reverseProxy = {
     domain = lib.options.mkOption {
       type = lib.types.str;
       description = "Base domain handled by the reverse proxy";
+      visible = false;
     };
     ip4 = lib.options.mkOption {
       type = lib.types.str;
@@ -33,6 +34,7 @@ in {
         type = lib.types.str;
         description = "Network name for Podman bridge network.";
         default = "reverse-proxy";
+        visible = false;
       };
       subnet = lib.options.mkOption {
         type = lib.types.str;

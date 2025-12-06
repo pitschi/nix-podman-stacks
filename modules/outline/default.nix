@@ -115,7 +115,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/auth/oidc.callback"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/oidc.callback"
         ];
         scopes = ["openid" "offline_access" "profile" "email"];
         grant_types = ["authorization_code" "refresh_token"];
@@ -143,7 +143,7 @@ in {
           utils = import ../utils.nix {inherit lib config;};
         in
           {
-            URL = cfg.containers.${name}.traefik.serviceUrl;
+            URL = cfg.containers.${name}.reverseProxy.serviceUrl;
             PORT = 3000;
             REDIS_URL = "redis://${redisName}:6379";
             DATABASE_URL.fromTemplate = "postgres://${cfg.db.username}:{{ file.Read `${cfg.db.passwordFile}` }}@${dbName}/outline";
@@ -152,7 +152,7 @@ in {
             UTILS_SECRET.fromFile = cfg.utilsSecretFile;
           }
           // lib.optionalAttrs cfg.oidc.enable {
-            OIDC_ISSUER_URL = config.nps.containers.authelia.traefik.serviceUrl;
+            OIDC_ISSUER_URL = config.nps.containers.authelia.reverseProxy.serviceUrl;
             OIDC_CLIENT_ID = name;
             OIDC_CLIENT_SECRET.fromFile = cfg.oidc.clientSecretFile;
             OIDC_SCOPES = utils.escapeOnDemand ''"openid offline_access profile email"'';

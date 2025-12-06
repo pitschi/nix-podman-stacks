@@ -79,7 +79,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/login/oauth2/code/authelia"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/login/oauth2/code/authelia"
         ];
       };
       # No real RBAC control based on custom claims / groups yet. Restrict user-access on Authelia level.
@@ -106,7 +106,7 @@ in {
           redirect-uri = "{baseScheme}://{baseHost}{basePort}{basePath}/login/oauth2/code/authelia";
         };
         provider.authelia = {
-          issuer-uri = config.nps.containers.authelia.traefik.serviceUrl;
+          issuer-uri = config.nps.containers.authelia.reverseProxy.serviceUrl;
           user-name-attribute = "preferred_username";
         };
       };

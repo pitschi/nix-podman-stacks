@@ -119,7 +119,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/api/oauth2-redirect"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/api/oauth2-redirect"
         ];
       };
       # No real RBAC control based on custom claims / groups yet. Restrict user-access on Authelia level
@@ -186,7 +186,7 @@ in {
         network =
           if (!cfg.useSocketProxy)
           then ["host"]
-          else [config.nps.stacks.traefik.network.name];
+          else [config.nps.reverseProxy.network.name];
 
         environment = {
           LISTEN = "/beszel_socket/beszel.sock";

@@ -70,8 +70,8 @@ in {
               type = lib.types.str;
               description = "The URL of the service.";
               default =
-                if (config.traefik.name != null)
-                then config.traefik.serviceUrl
+                if (config.reverseProxy.serviceName != null)
+                then config.reverseProxy.serviceUrl
                 else "";
             };
           };

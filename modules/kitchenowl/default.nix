@@ -78,7 +78,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${frontendName}.traefik.serviceUrl}/signin/redirect"
+          "${cfg.containers.${frontendName}.reverseProxy.serviceUrl}/signin/redirect"
           "kitchenowl:/signin/redirect"
         ];
         claims_policy = stackName;
@@ -133,30 +133,30 @@ in {
             JWT_SECRET_KEY.fromFile = cfg.jwtSecretFile;
           }
           // lib.optionalAttrs cfg.oidc.enable {
-            FRONT_URL = "${cfg.containers.${frontendName}.traefik.serviceUrl}";
-            OIDC_ISSUER = config.nps.containers.authelia.traefik.serviceUrl;
+            FRONT_URL = "${cfg.containers.${frontendName}.reverseProxy.serviceUrl}";
+            OIDC_ISSUER = config.nps.containers.authelia.reverseProxy.serviceUrl;
             OIDC_CLIENT_ID = stackName;
             OIDC_CLIENT_SECRET.fromFile = cfg.oidc.clientSecretFile;
           };
 
         stack = stackName;
 
-        # Join Traefik network for internal communication required for OIDC
-        network = [config.nps.stacks.traefik.network.name];
+        # Join reverse proxy network for internal communication required for OIDC
+        network = [config.nps.reverseProxy.network.name];
 
         homepage = {
           inherit category;
           name = displayName;
           settings = {
             inherit description;
-            href = cfg.containers.${frontendName}.traefik.serviceUrl;
+            href = cfg.containers.${frontendName}.reverseProxy.serviceUrl;
             icon = "kitchenowl";
           };
         };
         glance = {
           inherit category description;
           name = displayName;
-          url = cfg.containers.${frontendName}.traefik.serviceUrl;
+          url = cfg.containers.${frontendName}.reverseProxy.serviceUrl;
           id = stackName;
           icon = "di:kitchenowl";
         };

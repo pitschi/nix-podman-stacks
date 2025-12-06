@@ -14,7 +14,7 @@
   description = "Home Automation";
   displayName = "Home Assistant";
 
-  traefikSubnet = config.nps.stacks.traefik.network.subnet;
+  reverseProxySubnet = config.nps.reverseProxy.network.subnet;
 in {
   imports = import ../mkAliases.nix config lib name [name];
 
@@ -40,7 +40,7 @@ in {
 
       http = {
         use_x_forwarded_for = true;
-        trusted_proxies = [traefikSubnet "127.0.0.1" "::1"];
+        trusted_proxies = [reverseProxySubnet "127.0.0.1" "::1"];
       };
     };
 

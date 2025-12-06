@@ -185,6 +185,11 @@ in {
         assertion = config.nps.stacks.lldap.enable;
         message = "Authelia requires the `lldap` stack to be enabled";
       }
+      {
+        assertion =
+          cfg.enableTraefikMiddleware -> config.nps.stacks.traefik.enable;
+        message = "Enabling the Authelia Traefik middleware requires the `traefik` to be the enabled reverse proxy";
+      }
     ];
 
     nps.stacks.crowdsec = lib.mkIf cfg.crowdsec.enableLogCollection {
@@ -244,7 +249,7 @@ in {
           cookies = [
             {
               domain = config.nps.stacks.traefik.domain;
-              authelia_url = container.traefik.serviceUrl;
+              authelia_url = container.reverseProxy.serviceUrl;
               name = "authelia_session";
             }
           ];
@@ -264,7 +269,7 @@ in {
       containers.traefik.wantsContainer = [name];
       dynamicConfig.http.middlewares.authelia.forwardAuth = {
         address = "http://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2F${
-          cfg.containers.${name}.traefik.serviceHost
+          cfg.containers.${name}.reverseProxy.serviceHost
         }%2F";
         trustForwardHeader = true;
         authResponseHeaders = "Remote-User,Remote-Groups,Remote-Email,Remote-Name";

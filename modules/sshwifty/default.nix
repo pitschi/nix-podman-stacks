@@ -39,7 +39,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     nps.stacks.${name}.settings = {
-      HostName = cfg.containers.${name}.traefik.serviceHost;
+      HostName = cfg.containers.${name}.reverseProxy.serviceHost;
       Servers = [
         {
           ListenInterface = "0.0.0.0";

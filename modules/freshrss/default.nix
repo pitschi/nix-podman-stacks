@@ -106,7 +106,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}:443/i/oidc/"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}:443/i/oidc/"
         ];
       };
 
@@ -134,7 +134,7 @@ in {
       extraEnv =
         {
           CRON_MIN = "3,33";
-          TRUSTED_PROXY = config.nps.stacks.traefik.network.subnet;
+          TRUSTED_PROXY = config.nps.reverseProxy.network.subnet;
         }
         // lib.optionalAttrs (cfg.adminProvisioning.enable) {
           ADMIN_USERNAME = cfg.adminProvisioning.username;
@@ -144,7 +144,7 @@ in {
 
           FRESHRSS_INSTALL.fromTemplate = lib.concatStringsSep " " [
             "--api-enabled"
-            "--base-url ${cfg.containers.${name}.traefik.serviceUrl}"
+            "--base-url ${cfg.containers.${name}.reverseProxy.serviceUrl}"
             "--default-user ${cfg.adminProvisioning.username}"
             "--language en"
           ];
@@ -161,7 +161,7 @@ in {
           utils = import ../utils.nix {inherit lib config;};
         in {
           OIDC_ENABLED = 1;
-          OIDC_PROVIDER_METADATA_URL = "${config.nps.containers.authelia.traefik.serviceUrl}/.well-known/openid-configuration";
+          OIDC_PROVIDER_METADATA_URL = "${config.nps.containers.authelia.reverseProxy.serviceUrl}/.well-known/openid-configuration";
           OIDC_CLIENT_ID = name;
           OIDC_CLIENT_SECRET.fromFile = cfg.oidc.clientSecretFile;
           OIDC_CLIENT_CRYPTO_KEY = cfg.oidc.cryptoKeyFile;

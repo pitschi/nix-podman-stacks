@@ -40,7 +40,7 @@ in {
         "${storage}/data:/data"
       ];
       environment = {
-        DOMAIN = cfg.containers.${name}.traefik.serviceUrl;
+        DOMAIN = cfg.containers.${name}.reverseProxy.serviceUrl;
       };
       extraEnv = cfg.extraEnv;
 

@@ -80,7 +80,7 @@ in {
       };
 
       environment = {
-        NTFY_BASE_URL = cfg.containers.${name}.traefik.serviceUrl;
+        NTFY_BASE_URL = cfg.containers.${name}.reverseProxy.serviceUrl;
         NTFY_CACHE_FILE = "/var/lib/ntfy/cache.db";
         NTFY_AUTH_FILE = "/var/lib/ntfy/auth.db";
         NTFY_BEHIND_PROXY = true;

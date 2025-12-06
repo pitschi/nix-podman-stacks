@@ -66,7 +66,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/oauth2-callback"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/oauth2-callback"
         ];
         scopes = ["openid" "offline_access" "profile" "email"];
         claims_policy = name;

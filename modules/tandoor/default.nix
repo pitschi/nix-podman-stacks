@@ -87,7 +87,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/accounts/oidc/authelia/login/callback/"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/accounts/oidc/authelia/login/callback/"
         ];
       };
       settings.identity_providers.oidc.authorization_policies.${name} = {
@@ -114,7 +114,7 @@ in {
         in
           {
             SECRET_KEY.fromFile = cfg.secretKeyFile;
-            ALLOWED_HOSTS = cfg.containers.${name}.traefik.serviceHost;
+            ALLOWED_HOSTS = cfg.containers.${name}.reverseProxy.serviceHost;
             DB_ENGINE = "django.db.backends.postgresql";
             POSTGRES_HOST = dbName;
             POSTGRES_DB = db.POSTGRES_DB;
@@ -135,7 +135,7 @@ in {
                       client_id = name;
                       secret = ''{{ file.Read `${cfg.oidc.clientSecretFile}` }}'';
                       settings = {
-                        server_url = config.nps.containers.authelia.traefik.serviceUrl;
+                        server_url = config.nps.containers.authelia.reverseProxy.serviceUrl;
                         token_auth_method = "client_secret_basic";
                       };
                     }

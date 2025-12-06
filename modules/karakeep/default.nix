@@ -92,7 +92,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/api/auth/callback/custom"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/api/auth/callback/custom"
         ];
       };
 
@@ -128,7 +128,7 @@ in {
           DATA_DIR = "/data";
           MEILI_ADDR = "http://${meilisearchName}:7700";
           BROWSER_WEB_URL = "http://${chromeName}:9222";
-          NEXTAUTH_URL = cfg.containers.${name}.traefik.serviceUrl;
+          NEXTAUTH_URL = cfg.containers.${name}.reverseProxy.serviceUrl;
         };
         extraEnv =
           {
@@ -136,7 +136,7 @@ in {
             MEILI_MASTER_KEY.fromFile = cfg.meiliMasterKeyFile;
           }
           // lib.optionalAttrs cfg.oidc.enable {
-            OAUTH_WELLKNOWN_URL = "${config.nps.containers.authelia.traefik.serviceUrl}/.well-known/openid-configuration";
+            OAUTH_WELLKNOWN_URL = "${config.nps.containers.authelia.reverseProxy.serviceUrl}/.well-known/openid-configuration";
             OAUTH_CLIENT_ID = name;
             OAUTH_CLIENT_SECRET.fromFile = cfg.oidc.clientSecretFile;
             OAUTH_PROVIDER_NAME = "Authelia";

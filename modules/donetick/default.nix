@@ -83,7 +83,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/auth/oauth2"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/oauth2"
         ];
       };
 
@@ -123,7 +123,7 @@ in {
           rate_period = "60s";
           rate_limit = 300;
           cors_allow_origins = [
-            cfg.containers.${name}.traefik.serviceUrl
+            cfg.containers.${name}.reverseProxy.serviceUrl
             # the below are required for the android app to work
             "https://localhost"
             "capacitor://localhost"
@@ -161,7 +161,7 @@ in {
 
       (lib.mkIf cfg.oidc.enable {
         oauth2 = let
-          autheliaUrl = config.nps.containers.authelia.traefik.serviceUrl;
+          autheliaUrl = config.nps.containers.authelia.reverseProxy.serviceUrl;
         in {
           name = "Authelia";
           client_id = name;
@@ -169,7 +169,7 @@ in {
           auth_url = "${autheliaUrl}/api/oidc/authorization";
           token_url = "${autheliaUrl}/api/oidc/token";
           user_info_url = "${autheliaUrl}/api/oidc/userinfo";
-          redirect_url = "${cfg.containers.${name}.traefik.serviceUrl}/auth/oauth2";
+          redirect_url = "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/oauth2";
           scopes = ["openid" "profile" "email"];
         };
       })

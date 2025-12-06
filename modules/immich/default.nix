@@ -164,8 +164,8 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/auth/login"
-          "${cfg.containers.${name}.traefik.serviceUrl}/user-settings"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/login"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/user-settings"
           "app.immich:///oauth-callback"
         ];
         token_endpoint_auth_method = "client_secret_post";
@@ -199,7 +199,7 @@ in {
           clientId = name;
           clientSecret = ''{{ file.Read `${cfg.oidc.clientSecretFile}`}}'';
           defaultStorageQuota = 0;
-          issuerUrl = config.nps.stacks.authelia.containers.authelia.traefik.serviceUrl;
+          issuerUrl = config.nps.stacks.authelia.containers.authelia.reverseProxy.serviceUrl;
           mobileOverrideEnabled = false;
           mobileRedirectUri = "";
           scope = "openid profile email ${name}";

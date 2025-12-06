@@ -165,7 +165,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/authorization-code/callback"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/authorization-code/callback"
         ];
       };
 
@@ -197,7 +197,7 @@ in {
           authelia = config.nps.stacks.authelia;
           oidcClient = authelia.oidc.clients.${name};
         in {
-          issuer-url = authelia.containers.authelia.traefik.serviceUrl;
+          issuer-url = authelia.containers.authelia.reverseProxy.serviceUrl;
           client-id = oidcClient.client_id;
           client-secret = "\${AUTHELIA_CLIENT_SECRET}";
           redirect-url = lib.elemAt oidcClient.redirect_uris 0;

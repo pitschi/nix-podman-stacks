@@ -318,7 +318,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${grafanaName}.traefik.serviceUrl}/login/generic_oauth"
+          "${cfg.containers.${grafanaName}.reverseProxy.serviceUrl}/login/generic_oauth"
         ];
       };
 
@@ -391,7 +391,7 @@ in {
         ntfy.settings = lib.mkIf cfg.alertmanager.ntfy.enable {
           http.addr = ":8000";
           ntfy = {
-            baseurl = "http://${config.nps.containers.ntfy.traefik.serviceAddressInternal}";
+            baseurl = "http://${config.nps.containers.ntfy.reverseProxy.serviceAddressInternal}";
 
             notification = {
               topic = lib.mkDefault "alertmanager";
@@ -425,10 +425,10 @@ in {
         };
 
         extraEnv = let
-          autheliaUrl = config.nps.containers.authelia.traefik.serviceUrl;
+          autheliaUrl = config.nps.containers.authelia.reverseProxy.serviceUrl;
         in
           lib.optionalAttrs (cfg.grafana.oidc.enable) {
-            GF_SERVER_ROOT_URL = cfg.containers.${grafanaName}.traefik.serviceUrl;
+            GF_SERVER_ROOT_URL = cfg.containers.${grafanaName}.reverseProxy.serviceUrl;
             GF_AUTH_GENERIC_OAUTH_ENABLED = true;
             GF_AUTH_GENERIC_OAUTH_NAME = "Authelia";
             GF_AUTH_GENERIC_OAUTH_ICON = "signin";

@@ -91,7 +91,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          cfg.containers.${name}.traefik.serviceUrl
+          cfg.containers.${name}.reverseProxy.serviceUrl
         ];
         response_types = "id_token";
         grant_types = "implicit";
@@ -109,7 +109,7 @@ in {
         volumes = lib.optional (cfg.userMappingXml != null) "${cfg.userMappingXml}:/etc/guacamole/user-mapping.xml";
 
         extraEnv = let
-          autheliaUrl = config.nps.containers.authelia.traefik.serviceUrl;
+          autheliaUrl = config.nps.containers.authelia.reverseProxy.serviceUrl;
           utils = import ../utils.nix {inherit lib config;};
         in
           lib.optionalAttrs (cfg.oidc.enable) {
@@ -119,7 +119,7 @@ in {
             OPENID_ISSUER = autheliaUrl;
             OPENID_JWKS_ENDPOINT = "${autheliaUrl}/jwks.json";
             OPENID_AUTHORIZATION_ENDPOINT = "${autheliaUrl}/api/oidc/authorization?state=1234abcedfdhf";
-            OPENID_REDIRECT_URI = cfg.containers.${name}.traefik.serviceUrl;
+            OPENID_REDIRECT_URI = cfg.containers.${name}.reverseProxy.serviceUrl;
             OPENID_USERNAME_CLAIM_TYPE = "preferred_username";
             OPENID_GROUPS_CLAIM_TYPE = "groups";
             EXTENSION_PRIORITY = utils.escapeOnDemand ''"*, openid"'';

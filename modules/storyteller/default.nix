@@ -75,7 +75,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/api/v2/auth/callback/authelia"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/api/v2/auth/callback/authelia"
         ];
       };
       # No real RBAC control based on custom claims / groups yet. Restrict user-access on Authelia level
@@ -94,7 +94,7 @@ in {
       image = "registry.gitlab.com/storyteller-platform/storyteller:web-v2.2.2";
       volumes = ["${storage}:/data"];
 
-      environment.AUTH_URL = lib.mkIf cfg.oidc.enable "${cfg.containers.${name}.traefik.serviceUrl}/api/v2/auth";
+      environment.AUTH_URL = lib.mkIf cfg.oidc.enable "${cfg.containers.${name}.reverseProxy.serviceUrl}/api/v2/auth";
 
       fileEnvMount.STORYTELLER_SECRET_KEY_FILE = cfg.secretKeyFile;
       extraConfig.Service.ExecStartPost = lib.optional cfg.oidc.enable (
@@ -112,7 +112,7 @@ in {
                       '$UUID'
                   ),
                   'authProviders',
-                  '[{"kind":"custom","name":"Authelia","issuer":"${config.nps.containers.authelia.traefik.serviceUrl}","clientId":"storyteller","clientSecret":"$(< ${cfg.oidc.clientSecretFile})","type":"oidc"}]'
+                  '[{"kind":"custom","name":"Authelia","issuer":"${config.nps.containers.authelia.reverseProxy.serviceUrl}","clientId":"storyteller","clientSecret":"$(< ${cfg.oidc.clientSecretFile})","type":"oidc"}]'
               )
               ON CONFLICT(uuid) DO UPDATE SET value = excluded.value;
               SQL

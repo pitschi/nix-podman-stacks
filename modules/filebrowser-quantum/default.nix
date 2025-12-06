@@ -139,7 +139,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/api/auth/oidc/callback"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/api/auth/oidc/callback"
         ];
       };
 
@@ -162,7 +162,7 @@ in {
       server = {
         port = 80;
         baseURL = "/";
-        externalUrl = config.nps.containers.${name}.traefik.serviceUrl;
+        externalUrl = config.nps.containers.${name}.reverseProxy.serviceUrl;
         logging = [
           {levels = "warning";}
         ];
@@ -190,7 +190,7 @@ in {
       auth.methods.oidc = {
         enabled = cfg.oidc.enable;
         clientId = name;
-        issuerUrl = config.nps.containers.authelia.traefik.serviceUrl;
+        issuerUrl = config.nps.containers.authelia.reverseProxy.serviceUrl;
         scopes = "email openid profile groups";
         userIdentifier = "preferred_username";
         disableVerifyTLS = false;

@@ -28,7 +28,7 @@
         enablePrometheusExport = true;
         containers.blocky = {
           # When clicking the Blocky icon in the homepage, it will redirect to the Grafana dashboard.
-          homepage.settings.href = "${config.nps.containers.grafana.traefik.serviceUrl}/d/blocky";
+          homepage.settings.href = "${config.nps.containers.grafana.reverseProxy.serviceUrl}/d/blocky";
         };
       };
 

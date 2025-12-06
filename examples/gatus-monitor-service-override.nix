@@ -11,7 +11,7 @@ For example to set the url to a custom one and change the condition:
     aiostreams.containers.aiostreams.gatus = {
       enable = true;
       settings = {
-        url = "${cfg.traefik.serviceUrl}/api/v1/status";
+        url = "${cfg.reverseProxy.serviceUrl}/api/v1/status";
         conditions = [
           "[BODY].success == true"
         ];

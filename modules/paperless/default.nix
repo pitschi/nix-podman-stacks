@@ -140,7 +140,7 @@ in {
         pkce_challenge_method = "S256";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/accounts/oidc/authelia/login/callback/"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/accounts/oidc/authelia/login/callback/"
         ];
       };
       settings.identity_providers.oidc.authorization_policies.${name} = {
@@ -174,7 +174,7 @@ in {
           USERMAP_GID = config.nps.defaultGid;
           PAPERLESS_TIME_ZONE = config.nps.defaultTz;
           PAPERLESS_FILENAME_FORMAT = "{{created_year}}/{{correspondent}}/{{title}}";
-          PAPERLESS_URL = config.services.podman.containers.${name}.traefik.serviceUrl;
+          PAPERLESS_URL = config.services.podman.containers.${name}.reverseProxy.serviceUrl;
         };
 
         extraEnv =
@@ -191,7 +191,7 @@ in {
           // lib.optionalAttrs cfg.oidc.enable {
             PAPERLESS_APPS = "allauth.socialaccount.providers.openid_connect";
             PAPERLESS_SOCIALACCOUNT_PROVIDERS.fromTemplate = let
-              autheliaUrl = config.nps.containers.authelia.traefik.serviceUrl;
+              autheliaUrl = config.nps.containers.authelia.reverseProxy.serviceUrl;
             in
               {
                 openid_connect = {

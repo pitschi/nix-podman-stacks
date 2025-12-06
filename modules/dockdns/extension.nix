@@ -10,7 +10,7 @@ in {
   options.services.podman.containers = lib.mkOption {
     type = lib.types.attrsOf (lib.types.submodule ({config, ...}: {
       config = lib.mkIf (dockdnsEnabled && traefikEnabled && config.expose) {
-        labels."dockdns.name" = config.traefik.serviceHost;
+        labels."dockdns.name" = config.reverseProxy.serviceHost;
       };
     }));
   };

@@ -66,12 +66,12 @@ in {
       config = lib.mkIf (config.homepage.category != null) {
         homepage.settings = {
           id = name;
-          href = lib.mkIf (config.traefik.name != null) (lib.mkDefault config.traefik.serviceUrl);
+          href = lib.mkIf (config.traefik.name != null) (lib.mkDefault config.reverseProxy.serviceUrl);
           server = lib.mkDefault "local";
           container = lib.mkDefault name;
           widget = {
             enable = lib.mkDefault false;
-            url = lib.mkDefault "http://${config.traefik.serviceAddressInternal}";
+            url = lib.mkDefault "http://${config.reverseProxy.serviceAddressInternal}";
           };
         };
       };

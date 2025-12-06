@@ -6,6 +6,7 @@
 }: let
   name = "traefik";
   cfg = config.nps.stacks.${name};
+  reverseProxyCfg = config.nps.reverseProxy;
 
   yaml = pkgs.formats.yaml {};
 
@@ -21,11 +22,11 @@ in {
       (import ../docker-socket-proxy/mkSocketProxyOptionModule.nix {stack = name;})
       (lib.doRename {
         from = ["nps" "stacks" name "domain"];
-        to = ["nps" "stacks" "reverseProxy" "domain"];
+        to = ["nps" "reverseProxy" "domain"];
         use = x: x;
         warn = false;
         visible = true;
-        condition = config.nps.stacks.${name}.enable;
+        condition = cfg.enable;
       })
     ]
     ++ import ../mkAliases.nix config lib name name;
@@ -154,7 +155,7 @@ in {
         };
       };
       containers.crowdsec = lib.mkIf cfg.crowdsec.middleware.enable {
-        network = [cfg.network.name];
+        network = [reverseProxyCfg.network.name];
         extraEnv = {
           BOUNCER_KEY_TRAEFIK.fromFile = cfg.crowdsec.middleware.bouncerKeyFile;
         };
@@ -162,7 +163,7 @@ in {
     };
     nps.stacks.${name} = {
       staticConfig = lib.mkMerge [
-        (import ./config/traefik.nix lib cfg.domain cfg.network.name)
+        (import ./config/traefik.nix lib cfg.domain reverseProxyCfg.network.name)
 
         (lib.mkIf cfg.useSocketProxy {
           providers.docker.endpoint = config.nps.stacks.docker-socket-proxy.address;
@@ -241,6 +242,7 @@ in {
       };
     };
 
+    nps.reverseProxy.network.name = "traefik-proxy";
     services.podman.containers.${name} = rec {
       image = "docker.io/traefik:v3.6.2";
 
@@ -278,15 +280,15 @@ in {
 
       # Traefik should only be in a single network and not be added to others by integations (e.g. socket-proxy)
       # Otherwise we lose the ability to assign static ip (only works with single bridge network)
-      network = lib.mkForce cfg.network.name;
-      ip4 = cfg.ip4;
+      network = lib.mkForce reverseProxyCfg.network.name;
+      ip4 = reverseProxyCfg.ip4;
       # For every container that we manage, add a NetworkAlias, so that connections to Traefik are possible
       # trough the internal podman network (no host-gateway required)
       extraConfig.Container.NetworkAlias =
         config.services.podman.containers
         |> lib.attrValues
         |> lib.filter (c: c.traefik.name != null)
-        |> lib.map (c: c.traefik.serviceHost);
+        |> lib.map (c: c.reverseProxy.serviceHost);
 
       traefik.name = name;
       alloy.enable = true;

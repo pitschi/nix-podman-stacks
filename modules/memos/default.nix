@@ -96,7 +96,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/auth/callback"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/callback"
         ];
         token_endpoint_auth_method = "client_secret_post";
       };

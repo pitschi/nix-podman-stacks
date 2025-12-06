@@ -48,7 +48,7 @@ in {
         ADDON_NAME = "AIOStreams";
         ADDON_ID = "aiostreams.viren070.com";
         PORT = 3000;
-        BASE_URL = config.services.podman.containers.${name}.traefik.serviceUrl;
+        BASE_URL = config.services.podman.containers.${name}.reverseProxy.serviceUrl;
       };
       extraEnv = cfg.extraEnv;
 

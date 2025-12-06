@@ -16,7 +16,7 @@ The following two configurations are equivalent:
   nps.stacks.authelia.settings = {
     access_control.rules = [
       {
-        domain = config.nps.containers.homepage.traefik.serviceHost;
+        domain = config.nps.containers.homepage.reverseProxyCfg.serviceHost;
         policy = "two_factor";
       }
     ];

@@ -6,7 +6,7 @@
 }: let
   utils = pkgs.callPackage ../utils.nix {inherit config;};
   stackCfg = config.nps.stacks.traefik;
-  reverseProxyCfg = config.nps.stacks.reverseProxy;
+  reverseProxyCfg = config.nps.reverseProxy;
 
   getPort = port: index:
     if port == null
@@ -24,13 +24,14 @@ in {
           ...
         }: let
           traefikCfg = config.traefik;
+          reverseProxyCfg = config.reverseProxy;
           port = config.port;
         in {
           imports = [
             (lib.mkRenamedOptionModule ["port"] ["reverseProxy" "port"])
             (lib.mkRenamedOptionModule ["expose"] ["reverseProxy" "expose"])
             (lib.mkRenamedOptionModule ["traefik" "subDomain"] ["reverseProxy" "serviceName"])
-            (lib.mkRenamedOptionModule ["traefik" "serviceUrl"] ["reverseProxy" "serviceUrl"])
+            #(lib.mkRemovedOptionModule ["traefik" "serviceUrl"] "use reverseProxy.serviceUrl instead")
           ];
           options = with lib; {
             traefik = with lib; {
@@ -69,7 +70,7 @@ in {
           };
 
           config = let
-            enableTraefik = stackCfg.enable && traefikCfg.name != null;
+            enableTraefik = stackCfg.enable && reverseProxyCfg.serviceName != null;
             containerPort = getPort port 1;
             enabledMiddlewares =
               traefikCfg.middleware
@@ -85,7 +86,7 @@ in {
             labels = lib.optionalAttrs enableTraefik (
               {
                 "traefik.enable" = "true";
-                "traefik.http.routers.${name}.rule" = utils.escapeOnDemand ''Host(`${traefikCfg.serviceHost}`)'';
+                "traefik.http.routers.${name}.rule" = utils.escapeOnDemand ''Host(`${reverseProxyCfg.serviceHost}`)'';
                 # "traefik.http.routers.${name}.entrypoints" = "websecure,websecure-internal";
                 "traefik.http.routers.${name}.service" = lib.mkDefault name;
               }
@@ -108,7 +109,7 @@ in {
     containersWithMiddleware =
       config.services.podman.containers
       |> lib.attrValues
-      |> lib.filter (c: c.traefik.name != null && c.traefik.middleware != {});
+      |> lib.filter (c: c.reverseProxy.serviceName != null && c.traefik.middleware != {});
   in
     lib.mkIf stackCfg.enable {
       assertions = [

@@ -119,7 +119,7 @@ in {
         pkce_challenge_method = "";
         pre_configured_consent_duration = config.nps.stacks.authelia.oidc.defaultConsentDuration;
         redirect_uris = [
-          "${cfg.containers.${name}.traefik.serviceUrl}/auth/openid/authelia"
+          "${cfg.containers.${name}.reverseProxy.serviceUrl}/auth/openid/authelia"
         ];
       };
 
@@ -140,7 +140,7 @@ in {
         enabled = true;
         providers.authelia = {
           name = "Authelia";
-          authurl = config.nps.containers.authelia.traefik.serviceUrl;
+          authurl = config.nps.containers.authelia.reverseProxy.serviceUrl;
           clientid = name;
           scope = "openid profile email";
           forceuserinfo = true;
@@ -161,7 +161,7 @@ in {
 
         extraEnv =
           {
-            VIKUNJA_SERVICE_PUBLICURL = cfg.containers.${name}.traefik.serviceUrl;
+            VIKUNJA_SERVICE_PUBLICURL = cfg.containers.${name}.reverseProxy.serviceUrl;
             VIKUNJA_SERVICE_JWTSECRET.fromFile = cfg.jwtSecretFile;
           }
           // lib.optionalAttrs cfg.oidc.enable {

@@ -19,7 +19,7 @@ The most basic example to enable Gatus monitoring:
     in [
       {
         name = sonarrCfg.traefik.name;
-        url = sonarrCfg.traefik.serviceUrl;
+        url = sonarrCfg.reverseProxy.serviceUrl;
       }
     ];
   };
