@@ -24,38 +24,30 @@ in {
     };
     ip4 = lib.options.mkOption {
       type = lib.types.str;
-      readOnly = true;
       visible = false;
       description = "IPv4 address of the reverse proxy container in the Podman bridge network";
-      default = "10.80.0.2";
     };
     network = {
       name = lib.options.mkOption {
         type = lib.types.str;
         description = "Network name for Podman bridge network.";
-        default = "reverse-proxy";
         visible = false;
       };
       subnet = lib.options.mkOption {
         type = lib.types.str;
-        readOnly = true;
         visible = false;
         description = "Subnet of the Podman bridge network";
-        default = "10.80.0.0/24";
       };
       gateway = lib.options.mkOption {
         type = lib.types.str;
-        readOnly = true;
         visible = false;
         description = "Gateway of the Podman bridge network";
-        default = "10.80.0.1";
       };
       ipRange = lib.options.mkOption {
         type = lib.types.str;
-        readOnly = true;
+
         visible = false;
         description = "IP-Range of the Podman bridge network";
-        default = "10.80.0.10-10.80.0.255";
       };
     };
   };

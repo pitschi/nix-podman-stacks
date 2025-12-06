@@ -6,6 +6,7 @@
 }: let
   name = "tsbridge";
   cfg = config.nps.stacks.${name};
+  reverseProxyCfg = config.nps.reverseProxy;
 
   category = "Network & Administration";
   description = "Tailscale Proxy";
@@ -26,63 +27,18 @@ in {
       // {
         description = ''
           Whether to enable tsbridge.
-          
-          tsbridge is a Tailscale reverse proxy that discovers Docker containers 
+
+          tsbridge is a Tailscale reverse proxy that discovers Docker containers
           via labels and automatically exposes them on your Tailnet.
         '';
       };
 
-    network = {
-      name = lib.options.mkOption {
-        type = lib.types.str;
-        description = "Network name for Podman bridge network. tsbridge must share this network with containers it proxies.";
-        default = "tsbridge-proxy";
-      };
-      subnet = lib.options.mkOption {
-        type = lib.types.str;
-        readOnly = true;
-        visible = false;
-        description = "Subnet of the Podman bridge network";
-        default = "10.81.0.0/24";
-      };
-      gateway = lib.options.mkOption {
-        type = lib.types.str;
-        readOnly = true;
-        visible = false;
-        description = "Gateway of the Podman bridge network";
-        default = "10.81.0.1";
-      };
-      ipRange = lib.options.mkOption {
-        type = lib.types.str;
-        readOnly = true;
-        visible = false;
-        description = "IP-Range of the Podman bridge network";
-        default = "10.81.0.10-10.81.0.255";
-      };
-    };
-
     oauth = {
-      clientIdEnvVar = lib.options.mkOption {
+      clientId = lib.options.mkOption {
         type = lib.types.str;
-        default = "TSBRIDGE_OAUTH_CLIENT_ID";
-        description = ''
-          Name of the environment variable containing the Tailscale OAuth client ID.
-          Will be passed as tsbridge.oauth_client_id_env label.
-        '';
-      };
-      clientSecretEnvVar = lib.options.mkOption {
-        type = lib.types.str;
-        default = "TSBRIDGE_OAUTH_CLIENT_SECRET";
-        description = ''
-          Name of the environment variable containing the Tailscale OAuth client secret.
-          Will be passed as tsbridge.oauth_client_secret_env label.
-        '';
-      };
-      clientIdFile = lib.options.mkOption {
-        type = lib.types.nullOr lib.types.path;
         default = null;
         description = ''
-          Path to file containing the Tailscale OAuth client ID.
+          The Tailscale OAuth client ID.
           Required if using OAuth authentication.
         '';
       };
@@ -143,58 +99,31 @@ in {
         Extra environment variables to set for the container.
         Variables can be either set directly or sourced from a file (e.g. for secrets).
       '';
-      example = {
-        TSBRIDGE_OAUTH_CLIENT_ID = {
-          fromFile = "/run/secrets/tsbridge_oauth_client_id";
-        };
-        TSBRIDGE_OAUTH_CLIENT_SECRET = {
-          fromFile = "/run/secrets/tsbridge_oauth_client_secret";
-        };
-      };
     };
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.oauth.clientIdFile != null && cfg.oauth.clientSecretFile != null;
-        message = "tsbridge requires both oauth.clientIdFile and oauth.clientSecretFile to be set.";
-      }
-      {
-        assertion = cfg.tailnetDomain != "";
-        message = "tsbridge requires tailnetDomain to be set. Example: my-tailnet.ts.net";
-      }
-      {
-        assertion = cfg.useSocketProxy -> config.nps.stacks.docker-socket-proxy.enable;
-        message = "The option 'nps.stacks.${name}.useSocketProxy' is set to true, but the 'docker-socket-proxy' stack is not enabled.";
-      }
-    ];
-
-    services.podman.networks.${cfg.network.name} = {
-      driver = "bridge";
-      subnet = cfg.network.subnet;
-      gateway = cfg.network.gateway;
-      extraConfig = {
-        Network.IPRange = cfg.network.ipRange;
+    nps.reverseProxy = {
+      ip4 = "10.81.0.2";
+      network = {
+        name = "tsbridge-proxy";
+        subnet = "10.81.0.0/24";
+        gateway = "10.81.0.1";
+        ipRange = "10.81.0.10-10.81.0.255";
       };
     };
 
     services.podman.containers.${name} = {
-      image = "ghcr.io/jtdowney/tsbridge:latest";
+      image = "ghcr.io/jtdowney/tsbridge:v0.13.0";
 
       exec =
         "--provider docker"
-        + lib.optionalString cfg.useSocketProxy
-          " --docker-socket ${config.nps.stacks.docker-socket-proxy.address}";
+        + (lib.optionalString cfg.useSocketProxy " --docker-socket ${config.nps.stacks.docker-socket-proxy.address}");
 
       extraEnv =
         {
-          "${cfg.oauth.clientIdEnvVar}" = {
-            fromFile = cfg.oauth.clientIdFile;
-          };
-          "${cfg.oauth.clientSecretEnvVar}" = {
-            fromFile = cfg.oauth.clientSecretFile;
-          };
+          TSBRIDGE_OAUTH_CLIENT_ID = cfg.oauth.clientId;
+          TSBRIDGE_OAUTH_CLIENT_SECRET.fromFile = cfg.oauth.clientSecretFile;
         }
         // cfg.extraEnv;
 
@@ -204,8 +133,8 @@ in {
 
       labels =
         {
-          "tsbridge.tailscale.oauth_client_id_env" = cfg.oauth.clientIdEnvVar;
-          "tsbridge.tailscale.oauth_client_secret_env" = cfg.oauth.clientSecretEnvVar;
+          "tsbridge.tailscale.oauth_client_id_env" = "TSBRIDGE_OAUTH_CLIENT_ID";
+          "tsbridge.tailscale.oauth_client_secret_env" = "TS_OAUTH_CLIENT_SECRET";
           "tsbridge.tailscale.state_dir" = "/state";
         }
         // (lib.optionalAttrs (cfg.defaultTags != []) {
@@ -218,10 +147,9 @@ in {
           "tsbridge.global.write_timeout" = cfg.writeTimeout;
         });
 
-      network = [cfg.network.name];
-
-      # tsbridge needs access to Docker socket to discover containers
-      dependsOn = lib.mkIf cfg.useSocketProxy ["podman-docker-socket-proxy.service"];
+      # tsbridge should only be in a single network and not be added to others by integations (e.g. socket-proxy)
+      # Otherwise we lose the ability to assign static ip (only works with single bridge network)
+      network = lib.mkForce reverseProxyCfg.network.name;
 
       alloy.enable = true;
       homepage = {

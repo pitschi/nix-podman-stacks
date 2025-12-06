@@ -1,9 +1,11 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }: let
   stackCfg = config.nps.stacks.tsbridge;
+  utils = pkgs.callPackage ../utils.nix {inherit config;};
 in {
   options.services.podman.containers = lib.mkOption {
     type = lib.types.attrsOf (
@@ -12,29 +14,9 @@ in {
           name,
           config,
           ...
-        }: let
-          tsbridgeCfg = config.tsbridge;
-        in {
+        }: {
           options = with lib; {
             tsbridge = {
-              enable = mkOption {
-                type = types.bool;
-                default = false;
-                description = ''
-                  Whether this service should be exposed via tsbridge.
-                  When enabled, the service will be accessible on your Tailnet.
-                '';
-              };
-
-              port = mkOption {
-                type = types.nullOr types.int;
-                default = null;
-                description = ''
-                  The port that tsbridge should proxy to.
-                  Either port or backendAddr must be specified.
-                '';
-              };
-
               backendAddr = mkOption {
                 type = types.nullOr types.str;
                 default = null;
@@ -42,15 +24,6 @@ in {
                   The full backend address (host:port) that tsbridge should proxy to.
                   Either port or backendAddr must be specified.
                   Use this when you need to specify a different host than the container name.
-                '';
-              };
-
-              serviceName = mkOption {
-                type = types.nullOr types.str;
-                default = null;
-                description = ''
-                  Optional custom name for the service on the Tailnet.
-                  If not specified, the container name will be used.
                 '';
               };
 
@@ -63,7 +36,7 @@ in {
                 '';
               };
 
-              funnelEnabled = mkOption {
+              enableFunnel = mkOption {
                 type = types.bool;
                 default = false;
                 description = ''
@@ -134,108 +107,54 @@ in {
                   Only use this for trusted internal services with self-signed certificates.
                 '';
               };
-
-              serviceHost = mkOption {
-                type = types.str;
-                description = ''
-                  The full hostname of the service on the Tailnet.
-                  Format: serviceName.tailnet-domain
-                '';
-                default = 
-                  let
-                    serviceName = if tsbridgeCfg.serviceName != null
-                                  then tsbridgeCfg.serviceName
-                                  else name;
-                  in "${serviceName}.${stackCfg.tailnetDomain}";
-                defaultText = lib.literalExpression ''
-                  "''${tsbridgeCfg.serviceName or containerName}.''${stackCfg.tailnetDomain}"
-                '';
-                readOnly = true;
-              };
-
-              serviceUrl = mkOption {
-                type = types.str;
-                description = ''
-                  The full HTTPS URL of the service on the Tailnet.
-                '';
-                default = "https://${tsbridgeCfg.serviceHost}";
-                defaultText = lib.literalExpression ''"https://''${tsbridgeCfg.serviceHost}"'';
-                readOnly = true;
-              };
             };
           };
 
           config = let
-            enableTsbridge = stackCfg.enable && tsbridgeCfg.enable;
-            hasPort = tsbridgeCfg.port != null;
-            hasBackendAddr = tsbridgeCfg.backendAddr != null;
-          in {
-            # Assertions are now at the root module level (see below)
-            labels = lib.optionalAttrs enableTsbridge (
-              {
-                "tsbridge.enabled" = "true";
-              }
-              // (lib.optionalAttrs hasPort {
-                "tsbridge.service.port" = toString tsbridgeCfg.port;
-              })
-              // (lib.optionalAttrs hasBackendAddr {
-                "tsbridge.service.backend_addr" = tsbridgeCfg.backendAddr;
-              })
-              // (lib.optionalAttrs (tsbridgeCfg.serviceName != null) {
-                "tsbridge.service.name" = tsbridgeCfg.serviceName;
-              })
-              // (lib.optionalAttrs tsbridgeCfg.whoisEnabled {
-                "tsbridge.service.whois_enabled" = "true";
-              })
-              // (lib.optionalAttrs tsbridgeCfg.funnelEnabled {
-                "tsbridge.service.funnel_enabled" = "true";
-              })
-              // (lib.optionalAttrs tsbridgeCfg.ephemeral {
-                "tsbridge.service.ephemeral" = "true";
-              })
-              // (lib.optionalAttrs (tsbridgeCfg.tags != []) {
-                "tsbridge.service.tags" = lib.concatStringsSep "," tsbridgeCfg.tags;
-              })
-              // (lib.optionalAttrs (tsbridgeCfg.listenAddr != null) {
-                "tsbridge.service.listen_addr" = tsbridgeCfg.listenAddr;
-              })
-              // (lib.optionalAttrs (tsbridgeCfg.flushInterval != null) {
-                "tsbridge.service.flush_interval" = tsbridgeCfg.flushInterval;
-              })
-              // (lib.optionalAttrs (tsbridgeCfg.insecureSkipVerify) {
-                "tsbridge.service.insecure_skip_verify" = "true";
-              })
-              // (lib.foldl' (acc: name: acc // {
-                "tsbridge.service.upstream_headers.${name}" = tsbridgeCfg.headers.${name};
-              }) {} (lib.attrNames tsbridgeCfg.headers))
-            );
+            tsbridgeCfg = config.tsbridge;
+            reverseProxyCfg = config.reverseProxy;
+            port = config.port;
 
-            # Services using tsbridge must be on the same network
-            network = lib.mkIf enableTsbridge [stackCfg.network.name];
-          };
+            enableTsbridge = stackCfg.enable && reverseProxyCfg.serviceName != null;
+            containerPort = utils.reverseProxy.getPort port 1;
+          in
+            lib.mkIf enableTsbridge {
+              tsbridge.enableFunnel = config.reverseProxy.expose;
+              labels =
+                {
+                  "tsbridge.enabled" = "true";
+                  "tsbridge.service.name" = reverseProxyCfg.serviceName;
+                  "tsbridge.service.port" = containerPort;
+                }
+                // (lib.optionalAttrs tsbridgeCfg.whoisEnabled {
+                  "tsbridge.service.whois_enabled" = "true";
+                })
+                // (lib.optionalAttrs tsbridgeCfg.enableFunnel {
+                  "tsbridge.service.funnel_enabled" = "true";
+                })
+                // (lib.optionalAttrs tsbridgeCfg.ephemeral {
+                  "tsbridge.service.ephemeral" = "true";
+                })
+                // (lib.optionalAttrs (tsbridgeCfg.tags != []) {
+                  "tsbridge.service.tags" = lib.concatStringsSep "," tsbridgeCfg.tags;
+                })
+                // (lib.optionalAttrs (tsbridgeCfg.listenAddr != null) {
+                  "tsbridge.service.listen_addr" = tsbridgeCfg.listenAddr;
+                })
+                // (lib.optionalAttrs (tsbridgeCfg.flushInterval != null) {
+                  "tsbridge.service.flush_interval" = tsbridgeCfg.flushInterval;
+                })
+                // (lib.optionalAttrs (tsbridgeCfg.insecureSkipVerify) {
+                  "tsbridge.service.insecure_skip_verify" = "true";
+                })
+                // (lib.foldl' (acc: name:
+                  acc
+                  // {
+                    "tsbridge.service.upstream_headers.${name}" = tsbridgeCfg.headers.${name};
+                  }) {} (lib.attrNames tsbridgeCfg.headers));
+            };
         }
       )
     );
   };
-
-  # Root-level assertions for tsbridge configuration
-  config.assertions =
-    lib.mapAttrsToList (
-      name: containerCfg: let
-        tsbridgeCfg = containerCfg.tsbridge;
-        enableTsbridge = stackCfg.enable && tsbridgeCfg.enable;
-        hasPort = tsbridgeCfg.port != null;
-        hasBackendAddr = tsbridgeCfg.backendAddr != null;
-      in [
-        {
-          assertion = !enableTsbridge || (hasPort || hasBackendAddr);
-          message = "Container '${name}': tsbridge.enable is true but neither tsbridge.port nor tsbridge.backendAddr is specified.";
-        }
-        {
-          assertion = !enableTsbridge || !(hasPort && hasBackendAddr);
-          message = "Container '${name}': Both tsbridge.port and tsbridge.backendAddr are specified. Only one should be set.";
-        }
-      ]
-    ) config.services.podman.containers
-    |> lib.flatten;
 }
